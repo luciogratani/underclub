@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { PrenotazioneForm } from "@/components/prenotazione-form"
 import { EVENTO_CONFIG } from "@/lib/types"
-import { TerminalBackground } from "@/components/ui/background/terminal-background"
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
@@ -38,7 +37,7 @@ export default function Home() {
   }
 
   return (
-    <TerminalBackground>
+    <div className="min-h-screen">
       {/* Header con logo - Mobile optimized */}
       <header className="py-6 px-4 sm:py-8">
         <div className="max-w-6xl mx-auto flex justify-center">
@@ -94,6 +93,6 @@ export default function Home() {
       <footer className="py-6 px-4 text-center text-cyan-300/60 text-xs sm:text-sm">
         <p className="px-2">© 2025 Underclub - Prenotazioni online per {EVENTO_CONFIG.nome}</p>
       </footer>
-    </TerminalBackground>
+    </div>
   )
 }

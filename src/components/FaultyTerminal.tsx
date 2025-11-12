@@ -1,3 +1,5 @@
+"use client"
+
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 
@@ -257,7 +259,7 @@ export default function FaultyTerminal({
   tint = '#ffffff',
   mouseReact = true,
   mouseStrength = 0.2,
-  dpr = Math.min(window.devicePixelRatio || 1, 2),
+  dpr = 1,
   pageLoadAnimation = true,
   brightness = 1,
   className,
@@ -291,7 +293,9 @@ export default function FaultyTerminal({
     const ctn = containerRef.current;
     if (!ctn) return;
 
-    const renderer = new Renderer({ dpr });
+    // Safely get device pixel ratio on client side
+    const actualDpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : dpr;
+    const renderer = new Renderer({ dpr: actualDpr });
     rendererRef.current = renderer;
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 1);
@@ -397,7 +401,6 @@ export default function FaultyTerminal({
       timeOffsetRef.current = Math.random() * 100;
     };
   }, [
-    dpr,
     pause,
     timeScale,
     scale,
