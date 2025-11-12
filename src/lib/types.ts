@@ -4,12 +4,14 @@ export interface Prenotazione {
   id: string
   nome: string
   cognome: string
-  dataNascita: string
+  dataNascita?: string  // Campo opzionale per congruenza con form attuale
   email: string
   tranche: TrancheType
   codicePrenotazione: string
   timestamp: string
   stato: 'confermata' | 'checkin' | 'annullata'
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface Disponibilita {
@@ -20,15 +22,15 @@ export interface Disponibilita {
 export const TRANCHE_CONFIG = {
   tranche1: { prezzo: 10, descrizione: '10€ + 1 drink', maxPosti: 50 },
   tranche2: { prezzo: 15, descrizione: '15€ + 1 drink', maxPosti: 150 },
-  tranche3: { prezzo: 20, descrizione: '20€ + 1 drink (solo cassa)', maxPosti: 0 } // non prenotabile online
+  tranche3: { prezzo: 20, descrizione: '20€ + 1 drink', maxPosti: 0 } // non prenotabile online
 } as const
 
 export const EVENTO_CONFIG = {
   nome: 'Technoroom',
   data: '22 novembre 2025',
-  apertura: '00:30 del 23 novembre',
+  apertura: '00:30',
   lineup: 'Mådvi, Syra, Paola del Bene, Axiver, Alex Akashi',
-  location: 'VIA CORSO TRINITA - SASSARI',
+  location: 'Via Corso Trinità - Sassari',
   locale: 'Underclub',
   finePrenotazioni: '2025-11-22T23:59:00.000Z'
 } as const

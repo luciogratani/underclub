@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { CheckCircle, Download, ArrowLeft } from "lucide-react"
-import Image from "next/image"
+import { CheckCircle, Download } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { TRANCHE_CONFIG, EVENTO_CONFIG } from "@/lib/types"
 import { formatDateTime } from "@/lib/utils"
 
@@ -48,143 +47,56 @@ export default function SuccessContent() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Header - Mobile optimized */}
-      <header className="py-6 px-4 sm:py-8">
-        <div className="max-w-6xl mx-auto flex justify-center">
-          <Image
-            src="/logo_text_white_bg_black.jpg"
-            alt="Underclub Logo"
-            width={180}
-            height={60}
-            className="object-contain w-44 sm:w-52 drop-shadow-2xl"
-            priority
-          />
-        </div>
-      </header>
+    <div className="w-[80vw] h-[75vh] mx-auto backdrop-blur-[14px] shadow-2xl">
+      <Card className="w-full h-full border-0 bg-black/5 border border-white/20 flex flex-col rounded-3xl overflow-hidden">
 
-      {/* Success Content - Mobile first */}
-      <main className="py-8 px-4 sm:py-12">
-        <div className="max-w-2xl mx-auto">
-          {/* Success Message - Mobile optimized */}
-          <div className="text-center mb-6 sm:mb-8">
-            <CheckCircle className="w-16 h-16 sm:w-20 sm:h-20 text-green-400 mx-auto mb-4 drop-shadow-lg" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 sm:mb-2 leading-tight drop-shadow-lg">
+        <CardContent className="flex-1 flex flex-col px-6 py-6 overflow-hidden">
+          {/* Success Message */}
+          <div className="text-center mb-6">
+            <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
+            <h2 className="text-xl font-bold text-white mb-2">
               Prenotazione Confermata!
-            </h1>
-            <p className="text-lg sm:text-xl text-cyan-200 px-2 font-medium">
-              La tua prenotazione per {EVENTO_CONFIG.nome} è stata registrata con successo.
-            </p>
+            </h2>
+          </div>
+          {/* Dettagli Prenotazione */}
+          <div className="flex-1 space-y-4">
+            <div className="text-center">
+              <p className="text-base font-semibold text-white mb-2">{nome} {cognome}</p>
+              <p className="text-sm text-white/70 mb-4">{EVENTO_CONFIG.nome}</p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="text-center">
+                <label className="text-xs text-white/60 font-mono block mb-1">Codice Prenotazione</label>
+                <p className="text-lg font-mono font-bold text-white bg-white/10 px-4 py-2 rounded-lg select-all">
+                  {codice}
+                </p>
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-white/80">{EVENTO_CONFIG.data} • {EVENTO_CONFIG.apertura}</p>
+                <p className="text-sm text-white/70 font-mono">{EVENTO_CONFIG.location}</p>
+              </div>
+
+              <div className="text-center">
+                <p className="text-base font-semibold text-red-400">{trancheConfig.descrizione}</p>
+              </div>
+            </div>
           </div>
 
-          {/* Prenotazione Details - Mobile optimized */}
-          <Card className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md border-cyan-400/30 text-white shadow-2xl border-2">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-center text-xl sm:text-2xl text-cyan-300 font-bold">
-                🎫 Dettagli Prenotazione
-              </CardTitle>
-              <CardDescription className="text-center text-cyan-200/80 text-sm sm:text-base font-medium">
-                Salva questo biglietto per l'ingresso all'evento
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-5 sm:space-y-6 px-4 sm:px-6">
-              {/* Info Persona */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                <div className="space-y-1">
-                  <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide">Nome</label>
-                  <p className="text-base sm:text-lg font-semibold">{nome} {cognome}</p>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide">Codice Prenotazione</label>
-                  <p className="text-base sm:text-lg font-semibold font-mono bg-white/20 px-3 py-2 rounded-lg border border-white/20 select-all">
-                    {codice}
-                  </p>
-                </div>
-              </div>
-
-              {/* Info Evento */}
-              <div className="border-t border-white/20 pt-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide">Evento</label>
-                    <p className="text-base sm:text-lg font-medium">{EVENTO_CONFIG.nome}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide">Data & Ora</label>
-                    <p className="text-sm sm:text-base">{EVENTO_CONFIG.data} - {EVENTO_CONFIG.apertura}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Info Tranche */}
-              <div className="border-t border-white/20 pt-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide">Tranche</label>
-                    <p className="text-base sm:text-lg">{trancheConfig.descrizione}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide">Prezzo</label>
-                    <p className="text-base sm:text-lg font-semibold text-green-300">€{trancheConfig.prezzo}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Timestamp */}
-              <div className="border-t border-white/20 pt-4 text-center">
-                <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide block mb-1">Prenotato il</label>
-                <p className="text-sm sm:text-base font-medium">{formatDateTime(timestamp)}</p>
-              </div>
-
-              {/* Location */}
-              <div className="border-t border-white/20 pt-4 text-center">
-                <label className="text-xs sm:text-sm font-medium text-white/70 uppercase tracking-wide block mb-2">Location</label>
-                <p className="text-base sm:text-lg font-semibold">{EVENTO_CONFIG.locale}</p>
-                <p className="text-sm text-white/70">{EVENTO_CONFIG.location}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Actions - Mobile optimized */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
+          {/* Actions */}
+          <div className="mt-auto pt-4">
             <Button
               onClick={handleDownloadPDF}
               disabled={isGeneratingPDF}
-              className="flex-1 bg-purple-600 hover:bg-purple-700 h-12 sm:h-11 text-base sm:text-sm font-semibold touch-manipulation"
-              size="lg"
+              className="w-full bg-red-500/90 hover:bg-red-600/90 backdrop-blur-sm border border-white/20 text-white h-12 font-semibold"
             >
               <Download className="w-4 h-4 mr-2" />
-              {isGeneratingPDF ? "Generando PDF..." : "Scarica Biglietto PDF"}
-            </Button>
-
-            <Button
-              onClick={() => router.push('/')}
-              variant="outline"
-              className="flex-1 border-white/30 text-white hover:bg-white/10 h-12 sm:h-11 text-base sm:text-sm font-semibold touch-manipulation"
-              size="lg"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Torna alla Home
+              {isGeneratingPDF ? "Generando..." : "Scarica PDF"}
             </Button>
           </div>
-
-          {/* Info aggiuntive - Mobile optimized */}
-          <div className="mt-6 sm:mt-8 text-center text-white/70 text-xs sm:text-sm px-2">
-            <p className="mb-3 font-medium">
-              💡 <strong>Importante:</strong> Porta con te un documento d'identità per verificare l'età all'ingresso.
-            </p>
-            <p className="leading-relaxed">
-              📧 Riceverai una conferma via email con tutti i dettagli della tua prenotazione.
-            </p>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="py-6 px-4 text-center text-cyan-300/60 text-xs sm:text-sm">
-        <p className="px-2">© 2025 Underclub - Prenotazioni online per {EVENTO_CONFIG.nome}</p>
-      </footer>
+        </CardContent>
+      </Card>
     </div>
   )
 }

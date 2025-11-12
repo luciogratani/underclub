@@ -8,36 +8,35 @@ interface TerminalBackgroundProps {
 
 export function TerminalBackground({ children }: TerminalBackgroundProps) {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden">
       {/* Background Layer */}
       <div className="fixed inset-0 w-full h-full z-0">
-        <FaultyTerminal
-          scale={1.2}
-          gridMul={[2, 1]}
-          digitSize={1.1}
-          timeScale={0.8}
-          pause={false}
-          scanlineIntensity={0.8}
-          glitchAmount={0.7}
-          flickerAmount={0.6}
-          noiseAmp={0.8}
-          chromaticAberration={0.1}
-          dither={0.2}
-          curvature={0.1}
-          tint="#9333ea"
-          mouseReact={true}
-          mouseStrength={0.3}
-          pageLoadAnimation={true}
-          brightness={0.4}
-          className="opacity-60"
-        />
+      <FaultyTerminal
+        scale={2.5}
+        gridMul={[2, 1]}
+        digitSize={1.2}
+        timeScale={1}
+        pause={false}
+        scanlineIntensity={1}
+        glitchAmount={3}
+        flickerAmount={3}
+        noiseAmp={1}
+        chromaticAberration={0}
+        dither={0}
+        curvature={0.1}
+        tint="#EA1F1F"
+        mouseReact={false}
+        mouseStrength={0.5}
+        pageLoadAnimation={true}
+        brightness={0.9}
+      />
       </div>
 
-      {/* Gradient Overlay */}
-      <div className="fixed inset-0 bg-gradient-to-br from-black/80 via-purple-900/60 to-black/80 z-10" />
+      {/* Gradient Overlay - Essential for glassmorphism effects */}
+      <div className="fixed inset-0 bg-black/5 z-10" />
 
       {/* Content Layer */}
-      <div className="relative z-20">
+      <div className="absolute inset-0 z-20 flex items-center justify-center p-2">
         {children}
       </div>
     </div>
