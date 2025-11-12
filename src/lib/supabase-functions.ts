@@ -80,21 +80,19 @@ export async function creaPrenotazione(formData: PrenotazioneForm): Promise<{
   }
 }
 
-// Funzione per recuperare una prenotazione tramite codice
+// Funzione per recuperare una prenotazione tramite codice (versione sicura con RPC)
 export async function getPrenotazioneByCodice(codice: string): Promise<Prenotazione | null> {
   try {
-    const { data, error } = await supabase
-      .from('prenotazioni')
-      .select('*')
-      .eq('codice_prenotazione', codice.toUpperCase())
-      .single()
+    const { data, error } = await supabase.rpc('get_prenotazione_by_codice', {
+      p_codice: codice.toUpperCase()
+    })
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        // Nessun risultato trovato
-        return null
-      }
       console.error('Errore nel recupero prenotazione:', error)
+      return null
+    }
+
+    if (!data) {
       return null
     }
 

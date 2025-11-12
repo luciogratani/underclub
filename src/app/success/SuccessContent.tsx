@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { CheckCircle, Download } from "lucide-react"
+import jsPDF from 'jspdf'
+// @ts-ignore
+import QRCode from 'qrcode'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -91,14 +94,130 @@ export default function SuccessContent() {
 
   const trancheConfig = TRANCHE_CONFIG[prenotazione.tranche as keyof typeof TRANCHE_CONFIG]
 
+  // Funzione per caricare un'immagine come base64
+  const loadImageAsBase64 = (url: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'Anonymous'
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        canvas.width = img.width
+        canvas.height = img.height
+        ctx?.drawImage(img, 0, 0)
+        const dataURL = canvas.toDataURL('image/png')
+        resolve(dataURL)
+      }
+      img.onerror = reject
+      img.src = url
+    })
+  }
+
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true)
     try {
-      // Per ora simuliamo il download
-      // Qui integreremo la generazione PDF vera
-      alert("PDF generation will be implemented with Supabase integration")
+
+      // Carica l'immagine di sfondo
+      const backgroundImage = await loadImageAsBase64(`${window.location.origin}/sfondo-pdf.jpg`)
+
+      // Usa dimensioni PDF standard A4 verticale (210x297mm)
+      // L'immagine verrà scalata per adattarsi mantenendo le proporzioni
+      const pageWidth = 210  // A4 width in mm
+      const pageHeight = 297 // A4 height in mm
+
+      // Crea documento A4 verticale
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      })
+
+      // Calcola le dimensioni per adattare l'immagine (1080x1920) in A4 mantenendo proporzioni
+      // L'immagine originale è 9:16, A4 è circa 1:1.414
+      // Adatta l'immagine per riempire l'altezza e centrare orizzontalmente
+      const imgAspectRatio = 1080 / 1920 // 0.5625 (9:16)
+      const pageAspectRatio = pageWidth / pageHeight // ~0.707 (A4)
+
+      let imgWidth, imgHeight, xOffset, yOffset
+
+      if (imgAspectRatio > pageAspectRatio) {
+        // Immagine più larga rispetto al PDF - adatta all'altezza
+        imgHeight = pageHeight
+        imgWidth = pageHeight * imgAspectRatio
+        xOffset = (pageWidth - imgWidth) / 2 // Centra orizzontalmente
+        yOffset = 0
+      } else {
+        // Immagine più alta - adatta alla larghezza
+        imgWidth = pageWidth
+        imgHeight = pageWidth / imgAspectRatio
+        xOffset = 0
+        yOffset = (pageHeight - imgHeight) / 2 // Centra verticalmente
+      }
+
+      // Aggiungi l'immagine scalata e centrata
+      doc.addImage(backgroundImage, 'JPEG', xOffset, yOffset, imgWidth, imgHeight)
+
+      // Genera QR Code che punta alla pagina success
+      const qrCodeUrl = `${window.location.origin}/success?codice=${prenotazione.codicePrenotazione}`
+
+      // Genera QR code come data URL usando la libreria locale
+      const qrCodeDataURL = await QRCode.toDataURL(qrCodeUrl, {
+        width: 200,
+        height: 200,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      })
+
+      // Box elegante per il QR code al centro
+      const boxWidth = 100
+      const boxHeight = 120
+      const boxX = (pageWidth - boxWidth) / 2
+      const boxY = (pageHeight - boxHeight) / 2
+
+      // Sfondo nero solido
+      doc.setFillColor(0, 0, 0, 1)
+      doc.roundedRect(boxX, boxY, boxWidth, boxHeight, 8, 8, 'F')
+
+      // Bordo sottile bianco
+      doc.setDrawColor(255, 255, 255, 0.3)
+      doc.setLineWidth(0.5)
+      doc.roundedRect(boxX, boxY, boxWidth, boxHeight, 8, 8, 'S')
+
+      // Titolo
+      doc.setTextColor(255, 255, 255)
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(12)
+      doc.text(`UNDERCLUB - ${EVENTO_CONFIG.data.toUpperCase()}`, pageWidth / 2, boxY + 12, { align: 'center' })
+
+      doc.setFontSize(10)
+      doc.text(`${prenotazione.nome.toUpperCase()} ${prenotazione.cognome.toUpperCase()}`, pageWidth / 2, boxY + 20, { align: 'center' })
+
+      // QR Code al centro
+      const qrSize = 60
+      const qrX = (pageWidth - qrSize) / 2
+      const qrY = boxY + 25
+      doc.addImage(qrCodeDataURL, 'PNG', qrX, qrY, qrSize, qrSize)
+
+      // Testo sotto QR
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Scansiona per vedere i dettagli', pageWidth / 2, qrY + qrSize + 8, { align: 'center' })
+
+      doc.setFontSize(8)
+      doc.text(`Codice: ${prenotazione.codicePrenotazione}`, pageWidth / 2, qrY + qrSize + 15, { align: 'center' })
+
+      // Footer
+      doc.setFontSize(6)
+      doc.text('Presenta questo biglietto all\'ingresso', pageWidth / 2, boxY + boxHeight - 5, { align: 'center' })
+
+      // Scarica il biglietto QR
+      doc.save(`biglietto-qr-technoroom-${prenotazione.codicePrenotazione}.pdf`)
+
     } catch (error) {
-      console.error("Errore generazione PDF:", error)
+      console.error("Errore generazione biglietto QR:", error)
+      alert("Errore nella generazione del biglietto. Riprova.")
     } finally {
       setIsGeneratingPDF(false)
     }
@@ -150,7 +269,7 @@ export default function SuccessContent() {
               className="w-full bg-red-500/90 hover:bg-red-600/90 backdrop-blur-sm border border-white/20 text-white h-12 font-semibold"
             >
               <Download className="w-4 h-4 mr-2" />
-              {isGeneratingPDF ? "Generando..." : "Scarica PDF"}
+              {isGeneratingPDF ? "Generando..." : "Scarica Biglietto QR"}
             </Button>
           </div>
         </CardContent>

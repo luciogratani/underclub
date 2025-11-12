@@ -149,3 +149,26 @@ BEGIN
     RETURN row_to_json(prenotazione_record);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Funzione per recuperare una prenotazione tramite codice (sicura)
+CREATE OR REPLACE FUNCTION get_prenotazione_by_codice(
+    p_codice VARCHAR(6)
+) RETURNS JSON AS $$
+DECLARE
+    prenotazione_record prenotazioni%ROWTYPE;
+BEGIN
+    -- Cerca la prenotazione con il codice fornito
+    SELECT * INTO prenotazione_record
+    FROM prenotazioni
+    WHERE codice_prenotazione = UPPER(p_codice)
+    LIMIT 1;
+
+    -- Se non trovata, restituisci null
+    IF NOT FOUND THEN
+        RETURN NULL;
+    END IF;
+
+    -- Restituisci i dati della prenotazione in formato JSON
+    RETURN row_to_json(prenotazione_record);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
