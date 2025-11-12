@@ -268,11 +268,6 @@ export function PrenotazioneForm({ onSuccess, isLoading }: PrenotazioneFormProps
                             <span>{postiDisponibili} posti disponibili</span>
                           )}
                         </div>
-                        {isEsaurita && (
-                          <div className="text-xs text-gray-400 mt-1">
-                            Esaurita
-                          </div>
-                        )}
                       </div>
                     )
                   })}

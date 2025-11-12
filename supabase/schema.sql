@@ -28,14 +28,14 @@ BEGIN
     END IF;
 END $$;
 
--- Aggiungiamo una colonna singleton_id se non esiste
+-- Aggiungiamo una colonna singleton_id se non esiste e impostiamola come primary key
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns
                    WHERE table_name = 'disponibilita' AND column_name = 'singleton_id') THEN
         ALTER TABLE disponibilita ADD COLUMN singleton_id INTEGER DEFAULT 1;
         ALTER TABLE disponibilita ADD CONSTRAINT singleton_check CHECK (singleton_id = 1);
-        CREATE UNIQUE INDEX idx_disponibilita_singleton ON disponibilita(singleton_id);
+        ALTER TABLE disponibilita ADD PRIMARY KEY (singleton_id);
     END IF;
 END $$;
 

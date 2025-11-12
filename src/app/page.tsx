@@ -21,15 +21,9 @@ export default function Home() {
         return
       }
 
-      // Redirect alla pagina di successo con i dati
-      const params = new URLSearchParams({
-        nome: result.data!.nome,
-        cognome: result.data!.cognome,
-        codice: result.data!.codicePrenotazione,
-        tranche: result.data!.tranche
-      })
-
-      router.push(`/success?${params}`)
+      // Redirect alla pagina di successo con solo il codice prenotazione
+      // I dati verranno recuperati dal database per sicurezza
+      router.push(`/success?codice=${result.data!.codicePrenotazione}`)
     } catch (error) {
       console.error("Errore durante la prenotazione:", error)
       alert("Si è verificato un errore durante la prenotazione. Riprova.")
