@@ -113,7 +113,7 @@ export function PrenotazioneForm({ onSuccess, isLoading }: PrenotazioneFormProps
   return (
     <div className="flex flex-col items-center space-y-4">
       {/* Card Container */}
-      <div className="w-[80vw] h-[70vh] backdrop-blur-[14px] shadow-2xl rounded-3xl overflow-hidden">
+      <div className="w-[80vw] h-[75vh] backdrop-blur-[14px] shadow-2xl rounded-3xl overflow-hidden">
         <Card className="w-full h-full border-0 bg-black/5 border border-white/20 flex flex-col rounded-3xl overflow-hidden">
 
         <CardContent className="flex-1 flex flex-col px-6 py-6 overflow-hidden">
