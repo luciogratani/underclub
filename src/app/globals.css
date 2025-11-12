@@ -119,6 +119,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-space-grotesk), system-ui, sans-serif;
+    background-color: #000000 !important;
   }
 
   /* Force Space Grotesk font for all elements */
